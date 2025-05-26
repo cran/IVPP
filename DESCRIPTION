@@ -1,7 +1,7 @@
 Package: IVPP
 Type: Package
 Title: Invariance Partial Pruning Test
-Version: 1.1.0
+Version: 1.1.1
 Authors@R: 
     person(
       "Xinkai", "Du", , 
@@ -23,8 +23,9 @@ BugReports: https://github.com/xinkaidupsy/IVPP/issues
 URL: https://github.com/xinkaidupsy/IVPP
 RoxygenNote: 7.3.2
 NeedsCompilation: no
-Packaged: 2025-03-21 05:42:10 UTC; xinkaidu
-Author: Xinkai Du [aut, cre, cph] (<https://orcid.org/0000-0002-4158-7878>)
+Packaged: 2025-05-26 14:22:33 UTC; xinkaidu
+Author: Xinkai Du [aut, cre, cph] (ORCID:
+    <https://orcid.org/0000-0002-4158-7878>)
 Maintainer: Xinkai Du <xinkai.du.xd@gmail.com>
 Repository: CRAN
-Date/Publication: 2025-03-21 06:00:02 UTC
+Date/Publication: 2025-05-26 14:40:11 UTC

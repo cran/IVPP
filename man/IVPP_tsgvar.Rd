@@ -12,7 +12,8 @@ IVPP_tsgvar(
   beepvar,
   global = TRUE,
   g_test_net = c("both", "temporal", "contemporaneous"),
-  net_type = c("saturated", "sparse"),
+  net_type = c("sparse", "saturated"),
+  output_equal = FALSE,
   partial_prune = FALSE,
   prune_net = c("both", "temporal", "contemporaneous"),
   prune_alpha = 0.01,
@@ -45,6 +46,9 @@ See the Details section for more information.}
 \item{net_type}{A character vector specifying the type of networks to be compared in the global test.
 Specify "saturated" if you want to estimate and compare the saturated networks.
 Specify "sparse" if you want to estimate and compare the pruned networks.}
+
+\item{output_equal}{Whether to output the networks that are constrained equal across groups.
+Default to FALSE. Can set to TRUE if the global tests rejects heterogeneity.}
 
 \item{partial_prune}{A logical value specifying whether to conduct partial pruning test or not.}
 
@@ -117,9 +121,12 @@ pp_both <- IVPP_tsgvar(data,
                        vars = paste0("V",1:6),
                        idvar = "id",
                        global = FALSE,
-                       net_type = "sparse",
                        partial_prune = TRUE,
                        prune_net = "both",
                        ncores = 1)
 }
+}
+\author{
+Xinkai Du
+Maintainer: Xinkai Du \href{mailto:xinkai.du.xd@gmail.com}{xinkai.du.xd@gmail.com}
 }

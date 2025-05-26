@@ -6,7 +6,6 @@
 [![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![CRAN status](https://www.r-pkg.org/badges/version/IVPP)](https://CRAN.R-project.org/package=IVPP)
 [![CRAN Downloads](https://cranlogs.r-pkg.org/badges/grand-total/IVPP)](https://cran.r-project.org/package=IVPP)
-[![Codecov test coverage](https://codecov.io/gh/xinkaidupsy/IVPP/graph/badge.svg)](https://app.codecov.io/gh/xinkaidupsy/IVPP)
 <!-- badges: end -->
 
 An implementation of the Invariance Partial Pruning (IVPP) approach 
@@ -89,7 +88,6 @@ pp_both <- IVPP_panelgvar(data,
                           beepvar = "time",
                           groups = "group",
                           global = FALSE,
-                          net_type = "sparse",
                           partial_prune = TRUE,
                           prune_net = "both",
                           ncores = 2)
@@ -137,7 +135,6 @@ pp_both <- IVPP_tsgvar(data,
                        vars = paste0("V",1:6),
                        idvar = "id",
                        global = FALSE,
-                       net_type = "sparse",
                        partial_prune = TRUE,
                        prune_net = "both",
                        ncores = 2)                 
