@@ -225,6 +225,12 @@ IVPP_panelgvar <- function(data,
   # set up output list
   out <- list()
 
+  # fit measures to select
+  measures <- c("nvar", "nobs", "npar", "df",
+                "chisq", "pvalue", "nfi", "tli",
+                "cfi", "rmsea", "rmsea.ci.lower",
+                "rmsea.ci.upper", "rmsea.pvalue")
+
   # ----- omnibus test -----
   # browser()
 
@@ -271,6 +277,17 @@ IVPP_panelgvar <- function(data,
         groupequal(matrix = "beta") %>%
         groupequal(matrix = "omega_zeta_within") %>% runmodel %>% suppressWarnings
 
+      # store its fit
+      out$fit$free <- quiet_fit(mod_saturated) %>%
+        filter(.data$Measure %in% measures) %>%
+        select(.data$Value) %>% t %>%
+        round(3)
+
+      out$fit$bothEq <- quiet_fit(mod_saturated_bothEq) %>%
+        filter(.data$Measure %in% measures) %>%
+        select(.data$Value) %>% t %>%
+        round(3)
+
       # multi-group model estimation
       if (g_test_net == "temporal" | g_test_net == "contemporaneous") {
 
@@ -284,6 +301,17 @@ IVPP_panelgvar <- function(data,
 
         mod_saturated_tempEq <- mods[[1]]
         mod_saturated_contEq <- mods[[2]]
+
+        # store model fit
+        out$fit$tempEq <- quiet_fit(mod_saturated_tempEq) %>%
+          filter(.data$Measure %in% measures) %>%
+          select(.data$Value) %>% t %>%
+          round(3)
+
+        out$fit$contEq <- quiet_fit(mod_saturated_contEq) %>%
+          filter(.data$Measure %in% measures) %>%
+          select(.data$Value) %>% t %>%
+          round(3)
 
       }
 
@@ -319,15 +347,27 @@ IVPP_panelgvar <- function(data,
 
 
       # end: if(net_type == "saturated")
-    } else { # if (net_type == "pruned")
+    } else { # if (net_type == "sparse")
 
       # The free union model
       mod_union <- mod_saturated %>% prune(alpha = prune_alpha) %>% unionmodel %>% runmodel %>% suppressWarnings
+
+      # store model fit
+      out$fit$free <- quiet_fit(mod_union) %>%
+        filter(.data$Measure %in% measures) %>%
+        select(.data$Value) %>% t %>%
+        round(3)
 
       # the fully-constrained union model
       mod_union_bothEq <- mod_union %>%
         groupequal(matrix = "beta") %>%
         groupequal(matrix = "omega_zeta_within") %>% runmodel %>% suppressWarnings
+
+      # store model fit
+      out$fit$bothEq <- quiet_fit(mod_union_bothEq) %>%
+        filter(.data$Measure %in% measures) %>%
+        select(.data$Value) %>% t %>%
+        round(3)
 
       # estimate the multi-group model
       if (g_test_net == "temporal"|g_test_net == "contemporaneous"){
@@ -341,6 +381,17 @@ IVPP_panelgvar <- function(data,
 
         mod_union_tempEq <- mods[[1]]
         mod_union_contEq <- mods[[2]]
+
+        # store model fit
+        out$fit$tempEq <- quiet_fit(mod_union_tempEq) %>%
+          filter(.data$Measure %in% measures) %>%
+          select(.data$Value) %>% t %>%
+          round(3)
+
+        out$fit$contEq <- quiet_fit(mod_union_contEq) %>%
+          filter(.data$Measure %in% measures) %>%
+          select(.data$Value) %>% t %>%
+          round(3)
 
       }
 
@@ -561,6 +612,12 @@ IVPP_panelgvar <- function(data,
 
     } # end: if(g_test_net == xxx)
 
+    # store model fit
+    out$fit$partial_prune <- quiet_fit(mod_pp) %>%
+      filter(.data$Measure %in% measures) %>%
+      select(.data$Value) %>% t %>%
+      round(3)
+
     # save networks
     save_matrix <- c("PDC", "beta", "omega_zeta_within")
 
@@ -574,6 +631,9 @@ IVPP_panelgvar <- function(data,
 
     # save results to out
     out$partial_prune <- mat_pp
+
+    # save similarity measure as effect size
+    out$sF <- sF(mat_pp)
 
     # warn exploratory pruning
     message("\nResults of partial pruning are explratory. Be careful to interpret if group-equality constraints decreased AIC or BIC")
@@ -788,6 +848,12 @@ IVPP_tsgvar <- function(data,
   # create the list to store output
   out <- list()
 
+  # fit measures to select
+  measures <- c("nvar", "nobs", "npar", "df",
+                "chisq", "pvalue", "nfi", "tli",
+                "cfi", "rmsea", "rmsea.ci.lower",
+                "rmsea.ci.upper", "rmsea.pvalue")
+
   # ----- omnibus test -----
 
   # estimate the saturated free model
@@ -809,6 +875,17 @@ IVPP_tsgvar <- function(data,
         groupequal(matrix = "beta") %>%
         groupequal(matrix = "omega_zeta") %>% runmodel %>% suppressWarnings
 
+      # store model fit
+      out$fit$free <- quiet_fit(mod_saturated) %>%
+        filter(.data$Measure %in% measures) %>%
+        select(.data$Value) %>% t %>%
+        round(3)
+
+      out$fit$bothEq <- quiet_fit(mod_saturated_bothEq) %>%
+        filter(.data$Measure %in% measures) %>%
+        select(.data$Value) %>% t %>%
+        round(3)
+
       # multi-group model estimation
       if (g_test_net == "temporal" | g_test_net == "contemporaneous") {
 
@@ -822,6 +899,17 @@ IVPP_tsgvar <- function(data,
 
         mod_saturated_tempEq <- mods[[1]]
         mod_saturated_contEq <- mods[[2]]
+
+        # store model fit
+        out$fit$tempEq <- quiet_fit(mod_saturated_tempEq) %>%
+          filter(.data$Measure %in% measures) %>%
+          select(.data$Value) %>% t %>%
+          round(3)
+
+        out$fit$contEq <- quiet_fit(mod_saturated_contEq) %>%
+          filter(.data$Measure %in% measures) %>%
+          select(.data$Value) %>% t %>%
+          round(3)
 
       }
 
@@ -862,10 +950,22 @@ IVPP_tsgvar <- function(data,
       # The free union model
       mod_union <- mod_saturated %>% prune(alpha = prune_alpha) %>% unionmodel %>% runmodel %>% suppressWarnings
 
+      # store model fit
+      out$fit$free <- quiet_fit(mod_union) %>%
+        filter(.data$Measure %in% measures) %>%
+        select(.data$Value) %>% t %>%
+        round(3)
+
       # the fully-constrained union model
       mod_union_bothEq <- mod_union %>%
         groupequal(matrix = "beta") %>%
         groupequal(matrix = "omega_zeta") %>% runmodel %>% suppressWarnings
+
+      # store model fit
+      out$fit$bothEq <- quiet_fit(mod_union_bothEq) %>%
+        filter(.data$Measure %in% measures) %>%
+        select(.data$Value) %>% t %>%
+        round(3)
 
       # estimate the multi-group model
       if (g_test_net == "temporal"|g_test_net == "contemporaneous"){
@@ -880,6 +980,17 @@ IVPP_tsgvar <- function(data,
 
         mod_union_tempEq <- mods[[1]]
         mod_union_contEq <- mods[[2]]
+
+        # store model fit
+        out$fit$tempEq <- quiet_fit(mod_union_tempEq) %>%
+          filter(.data$Measure %in% measures) %>%
+          select(.data$Value) %>% t %>%
+          round(3)
+
+        out$fit$contEq <- quiet_fit(mod_union_contEq) %>%
+          filter(.data$Measure %in% measures) %>%
+          select(.data$Value) %>% t %>%
+          round(3)
 
       }
 
@@ -1069,6 +1180,12 @@ IVPP_tsgvar <- function(data,
 
     } # end: if(g_test_net == xxx)
 
+    # store model fit
+    out$fit$partial_prune <- quiet_fit(mod_pp) %>%
+      filter(.data$Measure %in% measures) %>%
+      select(.data$Value) %>% t %>%
+      round(3)
+
     # save networks
     save_matrix <- c("PDC", "beta", "omega_zeta")
 
@@ -1082,6 +1199,9 @@ IVPP_tsgvar <- function(data,
 
     # save results to out
     out$partial_prune <- mat_pp
+
+    # save similarity measure as effect size
+    out$sF <- sF(mat_pp)
 
     # warn exploratory pruning
     message("\nResults of partial pruning are explratory. Be careful to interpret if group-equality constraints decreased AIC or BIC")

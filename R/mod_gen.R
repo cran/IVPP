@@ -6,6 +6,7 @@
 #' @param n_group an integer denoting the number of groups
 #' @param p_rewire_temp a numeric value between 0-1 denoting the extent of group difference in the temporal network
 #' @param p_rewire_cont a numeric value between 0-1 denoting the extent of group difference in the contemporaneous network
+#' @param propPos specify the proportion of positive edges in the networks generated
 #'
 #' @author Xinkai Du
 #' Maintainer: Xinkai Du <xinkai.du.xd@gmail.com>
@@ -19,7 +20,7 @@
 #' which is a inverse of covariance matrix denoting the (dependence) among variables;
 #' kappa can be further standardized to the contemporaneous networks (\code{omega_zeta_within})
 #' @import bootnet dplyr clusterGeneration
-#' @importFrom stats setNames cov2cor
+#' @importFrom stats setNames cov2cor rnorm
 #' @export gen_panelGVAR
 #' @examples
 #' library(IVPP)
@@ -34,7 +35,8 @@
 gen_panelGVAR <- function(n_node = 6,
                           p_rewire_temp = 0.5,
                           p_rewire_cont = 0.5,
-                          n_group = 1){
+                          n_group = 1,
+                          propPos = 0.8){
 
 
   # check inputs ------------------------------------------------------------
@@ -51,14 +53,14 @@ gen_panelGVAR <- function(n_node = 6,
   # generate networks -------------------------------------------------------
 
   # the temporal network for g1
-  temp_base_ls[["g1"]] <- diag(0.5, n_node)
+  temp_base_ls[["g1"]] <- diag(1, n_node)
   temp_base_ls[["g1"]][cbind(1:n_node, ((1:n_node) + 1) %% n_node + 1)] <-
-    sample(c(0.25, -0.25), n_node, replace = TRUE, prob = c(0.8, 0.2))
+    sample(c(1, -1), n_node, replace = TRUE, prob = c(propPos, 1-propPos))
+
+  temp_base_ls[["g1"]]  <- temp_base_ls[["g1"]] * rnorm(n_node^2, mean = 0.3, sd = 0.1)
 
   # the contemporaneous network for g1
-  cont_base_ls[["g1"]] <- bootnet::genGGM(n_node, propPositive = 0.8)
-
-
+  cont_base_ls[["g1"]] <- bootnet::genGGM(n_node, propPositive = propPos)
 
   # If there are multiple groups, generate the rest
   if (n_group > 1) {
@@ -124,6 +126,7 @@ gen_panelGVAR <- function(n_node = 6,
 #' @param n_persons an integer denoting the number of individuals to generate tsGVAR for
 #' @param p_rewire_temp a numeric value between 0-1 denoting the extent of individual difference in the temporal network
 #' @param p_rewire_cont a numeric value between 0-1 denoting the extent of individual difference in the contemporaneous network
+#' @param propPos specify the proportion of positive edges in the networks generated
 #'
 #' @author Xinkai Du
 #' Maintainer: Xinkai Du <xinkai.du.xd@gmail.com>
@@ -137,7 +140,7 @@ gen_panelGVAR <- function(n_node = 6,
 #' which is a inverse of covariance matrix denoting the (dependence) among variables;
 #' kappa can be further standardized to the contemporaneous networks (\code{omega_zeta_within})
 #' @import bootnet dplyr clusterGeneration
-#' @importFrom stats setNames cov2cor
+#' @importFrom stats setNames cov2cor rnorm
 #' @export gen_tsGVAR
 #' @examples
 #' library(IVPP)
@@ -152,7 +155,8 @@ gen_panelGVAR <- function(n_node = 6,
 gen_tsGVAR <- function(n_node = 6,
                        p_rewire_temp = 0.5,
                        p_rewire_cont = 0.5,
-                       n_persons = 1){
+                       n_persons = 1,
+                       propPos = 0.8){
 
 
   # check inputs ------------------------------------------------------------
@@ -169,12 +173,15 @@ gen_tsGVAR <- function(n_node = 6,
   # generate networks -------------------------------------------------------
 
   # the temporal network for g1
-  temp_base_ls[["p1"]] <- diag(0.5, n_node)
+  temp_base_ls[["p1"]] <- diag(1, n_node)
   temp_base_ls[["p1"]][cbind(1:n_node, ((1:n_node) + 1) %% n_node + 1)] <-
-    sample(c(0.25, -0.25), n_node, replace = TRUE, prob = c(0.8, 0.2))
+    sample(c(1, -1), n_node, replace = TRUE, prob = c(propPos, 1-propPos))
+
+  temp_base_ls[["p1"]]  <- temp_base_ls[["p1"]] * rnorm(n_node^2, mean = 0.3, sd = 0.1)
+
 
   # the contemporaneous network for g1
-  cont_base_ls[["p1"]] <- bootnet::genGGM(n_node, propPositive = 0.8)
+  cont_base_ls[["p1"]] <- bootnet::genGGM(n_node, propPositive = propPos)
 
 
 
